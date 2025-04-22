@@ -1,0 +1,89 @@
+///////////////////////////////////////post search////////////////////////////////////////////
+
+
+
+..............................................function.php Page...................................................
+add_action('wp_ajax_postsearch_us', 'postsearch_us');
+add_action('wp_ajax_nopriv_postsearch_us', 'postsearch_us');
+
+function postsearch_us()
+{
+	$title=$_POST['title'];
+	
+            $arg = array(
+                'post_type' => 'health',
+                'post_status' => 'publish',
+                'posts_per_page' => -1,
+                's' =>$title
+            );
+			$post=new WP_Query($arg);
+			//echo "<pre>"; print_r($post); echo "</pre>";
+			if($post->have_posts()){?>
+			<div class="row">
+				<?php while($post->have_posts()){
+                 $post->the_post();?>
+<div class="col-md-3">
+	<h3><?php the_title(); ?></h3>
+</div>
+				<?php }?>
+				</div>
+			<?php }
+	
+	die();
+}
+
+..............................................The page where you required to display filtered post..........................................
+
+<form id="" method="post" action="search">
+    <input type="text" id="title" name="s" placeholder="search" name="">
+     <button type="button" class="btn" id="btn1">submit</button>
+</form>
+<div id="show">
+
+    <?php $args = array(
+        'post_type' => 'health',
+        'post_status' => 'publish',
+        'posts_per_page' => -1,
+        //'s' =>$title
+    );
+    $posts = new WP_Query($args);
+    //echo "<pre>"; print_r($post); echo "</pre>";
+    if ($posts->have_posts()) { ?>
+        <div class="row">
+            <?php while ($posts->have_posts()) {
+                $posts->the_post(); ?>
+                <div class="col-md-3">
+                    <h3>
+                        <?php the_title(); ?>
+                    </h3>
+                </div>
+            <?php } ?>
+        </div>
+    <?php } ?>
+
+
+
+
+</div>
+
+script in the same page ........................
+<script>
+    jQuery("#btn1").click(function () {
+        // alert("ok");
+        var title = jQuery('#title').val();
+        jQuery.ajax({
+            type: "POST",
+            url: '<?php echo admin_url('admin-ajax.php') ?>',
+            //dataType: "json",
+
+            data: {
+                action: 'postsearch_us',
+                title: title
+            },
+            success: function (data) {
+                // alert(data);
+                show.innerHTML = data;
+            }
+        });
+    })
+</script>

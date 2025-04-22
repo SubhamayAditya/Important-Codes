@@ -1,0 +1,61 @@
+
+//search form.php or required page where you want to display form
+
+<form method="post" id="searchform" action="<?php echo site_url('/'); ?>">
+<input type="text" size="20" name="s" id="title" autocomplete="off" onkeyup="myFunction()" value="<?php _e('Search')?>..."  onblur="if(this.value=='')this.value='<?php _e('Search')?>...';" onfocus="if(this.value=='<?php _e('Search')?>...')this.value='';"/>
+</form>
+
+//function.php or required page where you want to show the form 
+<script>
+
+  function myFunction() {
+    //alert('ok');
+    var title = document.getElementById("title").value;
+    //alert(title);
+    jQuery.ajax({
+      type: "POST",
+      url: '<?php echo admin_url('admin-ajax.php') ?>',
+      //dataType: "json",
+
+      data: {
+        action: 'search_us',
+        title: title
+      },
+      success: function (data) {
+        // alert(data);
+        show.innerHTML = data;
+      }
+    });
+
+  }
+</script>
+<?php add_action('wp_footer', 'myFunction');?>
+
+
+
+//function.php
+
+add_action('wp_ajax_search_us', 'search_us');
+add_action('wp_ajax_nopriv_search_us', 'search_us');
+
+
+function search_us()
+{
+
+    $the_query = new WP_Query(array( 'post_type' => 'health','s' => esc_attr($_POST['title']) ));
+    if ($the_query->have_posts()):
+        while ($the_query->have_posts()):
+            $the_query->the_post(); ?>
+
+           <div class="row"> <div class="col-md-4"><a href="<?php echo esc_url(post_permalink()); ?>"><?php the_title(); ?></a></div></div>
+
+        <?php endwhile;
+        wp_reset_postdata();
+    else:
+        echo '<h3>No Results Found</h3>';
+    endif;
+
+    die();
+}
+
+

@@ -1,0 +1,19 @@
+   <ul class="categories-slider">
+                    <?php
+                    $cat = get_categories(
+                        array(
+                            'taxonomy' => 'product_cat',
+                            'hide_empty' => true
+                        )
+                    );
+                    //print_r($cat);
+                    foreach ($cat as $catvalue) {
+                        ?>
+                        <li class="item"><a class="btn btn-border"
+                                href="<?php echo get_category_link($catvalue->term_id); ?>">
+                                <?php echo $catvalue->name; ?>
+                            </a></li>
+                        <?php
+                    }
+                    ?>
+                </ul>

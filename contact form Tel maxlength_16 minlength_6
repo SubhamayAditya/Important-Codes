@@ -1,0 +1,1 @@
+ [tel* Phone maxlength:16 minlength:6 class:form-control placeholder "Phone Number"]

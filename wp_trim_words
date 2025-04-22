@@ -1,0 +1,12 @@
+ <p>    
+     <?php echo wp_trim_words(get_the_content(), 100, '...'); // Adjust the number to your desired word limit ?>
+</p>
+
+//Updated
+
+ <p><?php echo wp_strip_all_tags(  mb_strimwidth(get_the_content(), 0,90, "..." ) ); ?></p>
+
+
+//Updated Auto para
+
+<?php echo wpautop('"' . wp_strip_all_tags(mb_strimwidth(get_the_content(), 0, 900, "...")) . '"'); ?>

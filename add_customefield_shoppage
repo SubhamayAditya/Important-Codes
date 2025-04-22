@@ -1,0 +1,19 @@
+  
+  <?php
+  
+  <?php $post_id = get_option( 'woocommerce_shop_page_id' ); 
+   if( have_rows('categories_menu', $post_id) ): ?>
+
+                <?php while( have_rows('categories_menu', $post_id) ): the_row(); 
+
+                    $titre = get_sub_field('titre_categorie', $post_id);
+                    $image = get_sub_field('image_categorie', $post_id);
+                    ?>
+                    <a class="link-cat" href="/carte/">
+                    <div class="col-md-4 product-cat" style="background-image: url(<?php echo $image['url']; ?>);">
+                        <h2 class="cat-title"><?php echo $titre; ?></h2>    
+                    </div>
+                    </a>
+                <?php endwhile; ?>
+
+            <?php endif; ?>

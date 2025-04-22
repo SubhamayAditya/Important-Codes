@@ -1,0 +1,1 @@
+<?php echo get_permalink(get_option('woocommerce_myaccount_page_id')); ?>

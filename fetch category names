@@ -1,0 +1,19 @@
+	<?php
+	$args = array("taxonomy" => "product_cat", 
+	"hide_empty" => false, 
+	"parent" => 0);
+	$allcats = get_terms($args); 
+	?>
+
+									<ul class="nav nav-tabs" role="tablist">
+										<?php foreach ($allcats as $allcat) {
+											//print_r($allcat)?>
+											<li class="nav-item">
+												<a class="nav-link" data-bs-toggle="tab"
+													href="<?php echo get_term_link($allcat, $taxonomy = 'product_cat') ?>">
+													<?php echo $allcat->name; ?>
+												</a>
+											</li>
+										<?php } ?>
+
+									</ul>

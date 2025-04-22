@@ -1,0 +1,1 @@
+<p><?php echo wp_strip_all_tags(mb_strimwidth(get_the_content(), 0, 90, '...')); ?></p>

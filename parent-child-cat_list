@@ -1,0 +1,149 @@
+
+
+<div id="accordion" role="tablist" class="faq-collapse">
+
+<?php $args = array(
+    'taxonomy' => 'product_cat',
+    //empty string(''), false, 0 don't work, and return empty array
+   // 'orderby' => 'name',
+    //'order' => 'DESC',
+    'hide_empty' => false,
+    //'include' => 'all', //empty string(''), false, 0 don't work, and return empty array
+    //'exclude' => 'all', //empty string(''), false, 0 don't work, and return empty array
+    //'exclude_tree' => 'all', //empty string(''), false, 0 don't work, and return empty array
+    //'number' => 0,
+    //can be 0, '0', '' too
+    //'parent' => 0,
+    // 'offset' => '',
+    //'fields' => 'all',
+    // 'name' => '',
+    // 'slug' => '',
+    // 'hierarchical' => true, //can be 1, '1' too
+    //'search' => '',
+    //'name__like' => '',
+    // 'description__like' => '',
+    //'pad_counts' => false, //can be 0, '0', '' too
+    // 'get' => '',
+    // 'child_of' => false, //can be 0, '0', '' too
+    //'childless' => false,
+    //'cache_domain' => 'core',
+    //'update_term_meta_cache' => true, //can be 1, '1' too
+    //'meta_query' => '',
+    //'meta_key' => array(),
+    //'meta_value'=> '',
+);
+$all_categories = get_terms($args); 
+//print_r($all_categories);
+$f=1;?>
+ 
+<?php foreach ($all_categories as $cat) {
+   $cat_id=$cat->term_id;
+   $cat_link=get_term_link( $cat );//parent link
+   //echo $cat_link;
+   //$slug=$cat->slug;
+   //echo $slug;
+   //echo $cat_id;
+                if($cat->parent == 0) { 
+                 //$child=get_term_children($cat->term_id, 'product_cat');
+                 //print_r($child);
+                // if(!is_wp_error($child)){
+                // print_r($child);
+                // print_r(get_term($child[1]))
+?>
+                   <div class="card">
+                    <div class="card-header" role="tab" id="heading<?php echo $f ?>">
+                        <h5 class="mb-0">
+                            <a data-toggle="collapse" href="#collapse<?php echo $f ?>" aria-expanded="true"
+                                aria-controls="collapse<?php echo $f ?>">
+                                <?php echo $cat->name ?>
+                                <?php echo $f ?>
+                            </a>
+                        </h5>
+                    </div>
+                    <?php  ?>
+                    <div id="collapse<?php echo $f ?>" class="collapse show" role="tabpanel" aria-labelledby="heading<?php echo $f ?>"
+                        data-parent="#accordion">
+                        <div class="card-body">
+<?php $children = get_terms(['taxonomy'=>'product_cat',
+'parent'=> $cat_id,
+'hide_empty' => false,]);
+foreach ($children as $child){
+//print_r($child->name);?>
+                            <p>
+                                <input type="checkbox" id="check4" name="check4" value="" />
+                                <label for="check4"><a href="<?php echo  $cat_link.$child->slug ?>"><?php echo $child->name ?></a></label>
+                            </p>
+                            <?php 
+                        }
+                        ?>
+                        </div>
+                    </div>
+                    </div>
+<?php
+$f++;
+                }
+            ;}
+            //}?>
+
+        </div>
+            
+            
+
+<!-- <div class="col-lg-3">
+    <div class="listing-left">
+        <div class="faq-sec">
+            <div id="accordion" role="tablist" class="faq-collapse">
+                <div class="card">
+                    <div class="card-header" role="tab" id="headingOne">
+                        <h5 class="mb-0">
+                            <a data-toggle="collapse" href="#collapseOne" aria-expanded="true"
+                                aria-controls="collapseOne">
+                                Part Type
+                            </a>
+                        </h5>
+                    </div>
+                    <div id="collapseOne" class="collapse show" role="tabpanel" aria-labelledby="headingOne"
+                        data-parent="#accordion">
+                        <div class="card-body">
+                            <p>
+                                <input type="checkbox" id="check1" name="check1" value="" />
+                                <label for="check1"> Tuners</label>
+                            </p>
+
+                            <p>
+                                <input type="checkbox" id="check2" name="check2" value="" />
+                                <label for="check2"> Tuning Software</label>
+                            </p>
+
+                            <p>
+                                <input type="checkbox" id="check3" name="check3" value="" />
+                                <label for="check3"> EGR Kit</label>
+                            </p>
+
+                            <p>
+                                <input type="checkbox" id="check4" name="check4" value="" />
+                                <label for="check4"> Exhaust Systems</label>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header" role="tab" id="headingTwo">
+                        <h5 class="mb-0">
+                            <a class="collapsed" data-toggle="collapse" href="#collapseTwo" aria-expanded="false"
+                                aria-controls="collapseTwo">
+                                Part Type 2
+                            </a>
+                        </h5>
+                    </div>
+                    <div id="collapseTwo" class="collapse" role="tabpanel" aria-labelledby="headingTwo"
+                        data-parent="#accordion">
+                        <div class="card-body">
+                            Demo
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> -->

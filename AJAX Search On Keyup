@@ -1,0 +1,114 @@
+///// HTML code
+
+<section class="blog-section common-padding-top">
+    <div class="container">
+        <br><br><br>
+        <label for="search">Search: </label><input type="text" id="search" name="search">
+        <br><br><br>
+        <div class="row" id="search-results">
+            <?php
+            $wpnew = array(
+                'post_type'      => 'post',
+                'post_status'    => 'publish',
+                'posts_per_page' => -1
+            );
+            $q = new WP_Query($wpnew);
+            while ($q->have_posts()) {
+                $q->the_post();
+            ?>
+                <div class="col-lg-4">
+                    <div class="item-box">
+                        <a href="<?php the_permalink(); ?>">
+                            <div class="image-box">
+                                <?php echo get_the_post_thumbnail(); ?>
+                            </div>
+                            <div class="blog-info">
+                                <p class="color-gold">
+                                    <?php echo get_the_date("F j, l"); ?>
+                                </p>
+                                <h5>
+                                    <?php the_title(); ?>
+                                </h5>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            <?php
+            }
+            wp_reset_postdata();
+            ?>
+        </div>
+    </div>
+</section>
+
+//// Script under the code
+
+<script>
+    jQuery(document).ready(function($) {
+        jQuery('#search').on('keyup', function() {
+            var keyword = $(this).val();
+            $.ajax({
+                url: '<?php echo admin_url('admin-ajax.php') ?>',
+                type: 'post',
+                data: {
+                    action: 'custom_search',
+                    keyword: keyword
+                },
+                success: function(response) {
+                    $('#search-results').html(response);
+                }
+            });
+        });
+    });
+</script>
+
+
+//////-------- functions.php------/////
+
+add_action('wp_ajax_custom_search', 'custom_search');
+add_action('wp_ajax_nopriv_custom_search', 'custom_search');
+
+function custom_search()
+{
+	$keyword = isset($_POST['keyword']) ? sanitize_text_field($_POST['keyword']) : '';
+
+	$args = array(
+		'post_type'      => 'post',
+		'post_status'    => 'publish',
+		'posts_per_page' => -1,
+		's'              => $keyword,
+	);
+
+	$q = new WP_Query($args);
+	ob_start();
+	if ($q->have_posts()) {
+		while ($q->have_posts()) {
+			$q->the_post();
+		?>
+			<div class="col-lg-4">
+				<div class="item-box">
+					<a href="<?php the_permalink(); ?>">
+						<div class="image-box">
+							<?php echo get_the_post_thumbnail(); ?>
+						</div>
+						<div class="blog-info">
+							<p class="color-gold">
+								<?php echo get_the_date("F j, l"); ?>
+							</p>
+							<h5>
+								<?php the_title(); ?>
+							</h5>
+						</div>
+					</a>
+				</div>
+			</div>
+<?php
+		}
+		wp_reset_postdata();
+	} else {
+		echo 'No results found.';
+	}
+	$output = ob_get_clean();
+	echo $output;
+	wp_die();
+}

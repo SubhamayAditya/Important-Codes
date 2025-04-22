@@ -1,0 +1,15 @@
+//Remove main editor from wordpress edit page screen 
+function remove_editor_for_specific_pages() {
+    // Get the current post ID
+    $post_id = isset($_GET['post']) ? $_GET['post'] : '';
+
+    // Define an array of page IDs where you want to remove the editor
+    $pages_to_remove_editor = array(75, 111, 73,115,68,109,81,77,113);
+
+    // Check if the current post is a page and its ID is in the specified array
+    if ($post_id && get_post_type($post_id) === 'page' && in_array($post_id, $pages_to_remove_editor)) {
+        remove_post_type_support('page', 'editor');
+    }
+}
+
+add_action('admin_init', 'remove_editor_for_specific_pages');

@@ -1,0 +1,98 @@
+<<<---- script under the code ------>>>>
+
+<script>
+    jQuery(document).ready(function($) {
+        jQuery(function($) {
+            var loadMoreButton = $('#LoadMoreProp'); //load more button id
+            var paged = 2;
+            var container = $('.propClass');  //row class
+
+            function loadposts() {
+                var data = {
+                    'action': 'load_more_postsProperty',
+                    'paged': paged,
+                };
+
+                $.ajax({
+                    url: '<?php echo admin_url('admin-ajax.php') ?>',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: data,
+                    success: function(response) {
+                        if (paged >= response.max) {
+                            $('#LoadMoreProp').hide();
+                        }
+                        container.append(response.html);
+                        paged++;
+                    }
+                });
+            }
+            loadMoreButton.on('click', function(e) {
+                e.preventDefault();
+                loadposts();
+            });
+        });
+    });
+</script>
+
+
+<<<<<<---- function.php  --->>>>
+
+//ajax Load more for Property Listing
+
+
+function load_more_postsProperty()
+{
+    $args2 = [
+        'post_type' => 'property',
+        'posts_per_page' => 3,
+        'paged'     => $_POST['paged'],
+        'post_status' => 'publish',
+    ];
+
+    $my_post2 = new WP_Query($args2);
+    $nex_pages2 = $my_post2->max_num_pages;
+
+    if ($my_post2->have_posts()) {
+        ob_start();
+        while ($my_post2->have_posts()) {
+            $my_post2->the_post(); ?>
+            <div class="col-lg-4 col-md-6 category-item-box">
+                <div class="category-box position-relative">
+                    <div class="image-box position-relative">
+                        <?php echo get_the_post_thumbnail(); ?>
+                        <div class="category-title">
+                            <h6><?php the_title(); ?></h6>
+                        </div>
+                    </div>
+                    <div class="category-list-row d-flex align-items-center justify-content-between">
+                        <div class="provide-item-row">
+                            <ul class="d-flex align-items-center">
+                                <li><span><img src="<?php echo get_field('bedrooms_image'); ?>" alt=""></span><?php echo get_field('bwdrooms_qtt'); ?></li>
+                                <li><span><img src="<?php echo get_field('bathroom_image'); ?>" alt=""></span><?php echo get_field('bwdrooms_qtt'); ?></li>
+                                <li><span><img src="<?php echo get_field('sq_ft_image'); ?>" alt=""></span><?php echo get_field('property_area_sq'); ?></li>
+                                <li><span><img src="<?php echo get_template_directory_uri() ?>/assets/images/terrace.svg" alt=""></span>26.0</li>
+                            </ul>
+                        </div>
+                        <div class="total-price-row">
+                            <span><?php echo get_field('property_price'); ?></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+<?php }
+        $output2 = ob_get_contents();
+        ob_end_clean();
+        wp_reset_postdata();
+    }
+    $result2 = [
+        'max' => $nex_pages2,
+        'html' => $output2,
+    ];
+
+    echo json_encode($result2);
+    wp_die();
+}
+
+add_action('wp_ajax_load_more_postsProperty', 'load_more_postsProperty');
+add_action('wp_ajax_nopriv_load_more_postsProperty', 'load_more_postsProperty');

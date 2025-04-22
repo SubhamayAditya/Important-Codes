@@ -1,0 +1,21 @@
+<div class="banner-image">
+                        <?php $image_banner = get_field("image_banner",$page_id);
+                        if ($image_banner != "") { ?>
+                           <img src="<?php echo $image_banner; ?>" alt="">
+                        <?php } ?>
+</div>
+
+   ====================================== OR ==================
+
+$page_id = get_the_id();
+
+
+
+<?php if (!empty(get_field("title_banner"))) { ?>
+
+
+   <?php if (!empty(get_field("title_banner",$page_id))) { ?>
+                <h1>
+                    <?php echo get_field("title_banner",$page_id); ?>
+                </h1>
+   <?php } ?>

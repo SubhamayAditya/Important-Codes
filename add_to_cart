@@ -1,0 +1,6 @@
+//add to cart button using sortcode
+ echo do_shortcode("[add_to_cart id=$id  show_price='false' class='btn btn-invert']") 
+ or
+ <?php $postId = $product->get_id();?>
+ $_product = wc_get_product( $postId );
+   <a href="<?php echo $product->add_to_cart_url(); ?>"><i class="fa-solid fa-plus"></i> Add to Cart</a>

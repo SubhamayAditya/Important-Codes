@@ -1,0 +1,54 @@
+<div class="row">
+
+                <?php
+                $wpnew = array(
+                    'post_type' => 'health',
+                    'post_status' => 'publish',
+                    'paged' => 1,
+                    'posts_per_page' => 4,
+                    'tax_query' => array(
+                        array(
+                            'taxonomy' => 'health_type',
+                            'field' => 'slug',
+                            'terms' => array('breast-health'),
+                        )
+                    )
+
+                );
+                $q2 = new WP_Query($wpnew);
+
+                if ($q2->have_posts()) {
+                    while ($q2->have_posts()) {
+                        $q2->the_post();
+                        $path = wp_get_attachment_image_src(get_post_thumbnail_id(), 'full');
+                        ?>
+
+                        <div class="col-lg-6 mb-lg-5 mb-md-4 mb-4">
+                            <div class="healthBox">
+                                <div class="healthPic"><img src="<?php echo $path[0]; ?>" alt=""></div>
+                                <div class="healthContent">
+                                    <?php $cat = get_the_terms($selection->ID, 'health_type'); ?>
+                                    <h6 class="smallTitle text-uppercase">
+                                        <?php echo $cat[0]->name; ?>
+                                    </h6>
+                                    <!-- <h6 class="smallTitle text-uppercase">Breast Cancer</h6> -->
+                                    <h6 class="breastTitle">
+                                        <a href="<?php the_permalink(); ?>">
+                                            <?php the_title(); ?>
+                                        </a>
+                                    </h6>
+                                    <p>
+                                        <?php //the_content(); ?>
+                                        <?php echo wp_trim_words(get_the_excerpt(), 20) ?>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <?php
+                    }
+                }
+                wp_reset_query();
+                ?>
+
+            </div>

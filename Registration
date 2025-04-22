@@ -1,0 +1,74 @@
+<?php
+global $wpdb;
+
+if ($_POST) {
+
+    $username = $wpdb->escape($_POST['txtUsername']);
+    $email = $wpdb->escape($_POST['txtEmail']);
+    $password = $wpdb->escape($_POST['txtPassword']);
+    $ConfPassword = $wpdb->escape($_POST['txtConPassword']);
+
+    $error = array();
+    if (strpos($username, ' ') !== FALSE) {
+        $error['username_space'] = "Username has Space";
+    }
+
+    if (empty($username)) {
+        $error['username_empty'] = "Needed Username must";
+    }
+
+    if (username_exists($username)) {
+        $error['username_exists'] = "Username already exists";
+    }
+
+    if (!is_email($email)) {
+        $error['email_valid'] = "Email has no valid value";
+    }
+
+    if (email_exists($email)) {
+        $error['email_existence'] = "Email already exists";
+    }
+    if (empty($password)) {
+        $error['password_empty'] = "Needed Password must";
+    }
+    if (strcmp($password, $ConfPassword) !== 0) {
+        $error['password'] = "Password didn't match";
+    }
+
+    if (count($error) == 0) {
+
+        wp_create_user($username, $password, $email);
+        echo "User Created Successfully";
+        //exit();
+    } else {
+
+        print_r($error);
+
+    }
+}
+?>
+
+<center>
+    <h2>New User Resgistration </h2>
+    <form method="post" style=" border: 1px solid red;">
+
+        <div>
+            Enter User Name :
+            <input type="text" name="txtUsername" id="txtUsername" placeholder="Username">
+        </div><br><br>
+        <div>
+            Enter Email :
+            <input type="email" name="txtEmail" id="txtEmail" placeholder="Email">
+        </div><br><br>
+        <div>
+            Enter Password :
+            <input type="text" name="txtPassword" id="txtPassword" placeholder="Password">
+        </div><br><br>
+        <div>
+            Enter Confirm Password :
+            <input type="text" name="txtConPassword" id="txtConPassword" placeholder="Cofirm Password">
+        </div><br><br>
+
+        <input type="submit" name="btn">
+    </form>
+</center>

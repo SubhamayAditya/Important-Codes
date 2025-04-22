@@ -1,0 +1,29 @@
+<section class="faq-section common-padding">
+    <div class="container">
+        <div class="accordion-wraper">
+            <div class="accordion" id="faq">
+                <?php
+                $flag = 1;
+                if (have_rows('frequently_asked_qstn_ans')) :
+                    while (have_rows('frequently_asked_qstn_ans')) : the_row();
+                ?>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="faq<?php echo $flag; ?>">
+                                <button class="accordion-button  <?php if ($flag != 1) { echo "collapsed";} ?>" type="button" data-bs-toggle="collapse" data-bs-target="#collapse<?php echo $flag; ?>" aria-expanded="<?php if ($flag == 1) {echo "true";} else {echo "false";} ?>" aria-controls="collapse<?php echo $flag; ?>">
+                                    <?php echo get_sub_field('questions_faq'); ?>
+                                </button>
+                            </h2>
+                            <div id="collapse<?php echo $flag; ?>" class="accordion-collapse collapse <?php if ($flag == 1) {echo "show";} ?>" aria-labelledby="faq<?php echo $flag; ?>" data-bs-parent="#faq">
+                                <div class="accordion-body">
+                                    <?php echo get_sub_field('answers_faq'); ?>
+                                </div>
+                            </div>
+                        </div>
+                <?php
+                        $flag++;
+                    endwhile;
+                endif; ?>
+            </div>
+        </div>
+    </div>
+</section>

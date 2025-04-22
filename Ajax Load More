@@ -1,0 +1,128 @@
+////Ajax
+
+//-------function.php page---------///
+
+function more_post_ajax()
+{
+    $offset = $_POST["offset"];
+
+    $wpnew = array(
+        'post_type' => 'post',
+        'post_status' => 'publish',
+        'posts_per_page' => 3,
+        'offset'=>$offset
+    );
+    $q = new WP_Query($wpnew);
+    $exclude_posts = array(); // Create an array to keep track of posts to exclude
+
+    while ($q->have_posts()) {
+        $q->the_post();
+
+        ?>
+
+        <div class="col-lg-4">
+            <div class="item-box" style="margin-top:10px;">
+                <a href="">
+                    <div class="image-box">
+                        <?php echo get_the_post_thumbnail(); ?>
+                    </div>
+                    <div class="blog-info">
+                        <p class="color-gold">
+                            <?php echo get_the_date('Y-m-d'); ?>
+                        </p>
+                        <h5>
+                            <?php the_title(); ?>
+                        </h5>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <?php
+    }
+    wp_reset_postdata();
+    die(); // use die instead of exit 
+}
+add_action('wp_ajax_nopriv_more_post_ajax', 'more_post_ajax');
+add_action('wp_ajax_more_post_ajax', 'more_post_ajax');
+
+
+//-------------the page where load more button ---------//
+
+
+ <div class="container">
+            <div class="row project">
+                <?php
+                $wpnew = array(
+                    'post_type' => 'post',
+                    'post_status' => 'publish',
+                    'posts_per_page' => 3
+                );
+                $q = new WP_Query($wpnew);
+                while ($q->have_posts()) {
+                    $q->the_post();
+                    //$path = wp_get_attachment_image_src(get_post_thumbnail_id());               
+                
+                    ?>
+
+                    <div class="col-lg-4">
+                        <div class="item-box">
+                            <a href="">
+                                <div class="image-box">
+                                    <?php echo get_the_post_thumbnail(); ?>
+                                </div>
+                                <div class="blog-info">
+                                    <p class="color-gold">
+                                        <?php echo get_the_date('Y-m-d'); ?>
+                                    </p>
+                                    <h5>
+                                        <?php the_title(); ?>
+                                    </h5>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    <?php
+                }
+                wp_reset_postdata();
+                ?>
+
+            </div>
+        </div>
+        <div class="gallery-btn text-center">
+            <a href="javascript:void(0);" id="LoadId" class="LoadClass btn">Load
+                More</a>
+        </div>
+
+
+    //---------script uder the code----------------//
+
+   <script>
+    // Initialize page variable
+    var page = 1;
+
+    jQuery(document).ready(function ($) {
+        $("#LoadId").on("click", function (e) {
+            var button = $(this); // Store the button element in a variable
+
+            jQuery.ajax({
+                // use the ajax object url
+                url: "<?php echo admin_url("admin-ajax.php"); ?>",
+                type: 'POST',
+                data: {
+                    action: "more_post_ajax", // add your action to the data object
+                    offset: page * 3 //  page # x your default posts per page
+                },
+                success: function (data) {
+                    page++;
+                    $('.project').append(data);
+
+                    // Hide the button after the first hit
+                   // button.hide();
+                },
+                error: function (data) {
+                    console.log(data);
+                }
+            });
+        });
+    });
+</script>

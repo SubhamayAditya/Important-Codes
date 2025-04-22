@@ -1,0 +1,9 @@
+/*-----------------Remove admin bar if not admin---------------------*/
+
+function remove_admin_bar_if_not_admin()
+{
+	if (!current_user_can('administrator') && !is_admin()) {
+		show_admin_bar(false);
+	}
+}
+add_action('after_setup_theme', 'remove_admin_bar_if_not_admin');

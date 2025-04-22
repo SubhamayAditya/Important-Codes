@@ -1,0 +1,13 @@
+//Contact Form 7  Name validation
+
+add_filter( 'wpcf7_validate_text*', 'custom_text_validation_filter', 20, 2 );
+function custom_text_validation_filter( $result, $tag ) {
+    if ( 'your-name' == $tag->name ) {
+        // matches any utf words with the first not starting with a number
+       $re = '/^[A-Za-z]+$/';
+        if (!preg_match($re, $_POST['your-name'], $matches)) {
+            $result->invalidate($tag, "This is not a valid name!" );
+        }
+    }
+    return $result;
+}

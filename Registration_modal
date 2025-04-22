@@ -1,0 +1,99 @@
+<?php
+global $wpdb;
+
+if (isset($_POST['btn_signup'])) {
+
+  $username = $wpdb->escape($_POST['txtUsername']);
+  $email = $wpdb->escape($_POST['txtEmail']);
+  $password = $wpdb->escape($_POST['txtPassword']);
+  $ConfPassword = $wpdb->escape($_POST['txtConfirmPassword']);
+
+  $error = array();
+  if (strpos($username, ' ') !== FALSE) {
+    $error['username_space'] = "Username has Space";
+  }
+
+  if (empty($username)) {
+    $error['username_empty'] = "Needed Username must";
+  }
+
+  if (username_exists($username)) {
+    $error['username_exists'] = "Username already exists";
+  }
+
+  if (!is_email($email)) {
+    $error['email_valid'] = "Email has no valid value";
+  }
+
+  if (email_exists($email)) {
+    $error['email_existence'] = "Email already exists";
+  }
+
+  if (strcmp($password, $ConfPassword) !== 0) {
+    $error['password'] = "Password didn't match";
+  }
+
+  if (count($error) == 0) {
+
+    wp_create_user($username, $password, $email);
+    echo "<div class='alert alert-success alert-dismissible fade show' role='alert'>'User Created Successfully';</div>" ?>
+
+    <?php
+  } else {
+
+    print_r($error);
+
+  }
+}
+?>
+
+
+//------------------
+ <!-- Modal -->
+              <!-- Button trigger modal -->
+
+              <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+                <?php echo get_field('button_text', 'option'); ?>
+              </button>
+
+
+              <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header bg-primary">
+                      <h4 class="modal-title text-light" id="exampleModalLabel">Registration</h4>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body row d-flex justify-content-center ">
+                      <form method="post">
+                        <div class="form-group">
+                          <label for="name">Name:</label>
+                          <input type="text" class="form-control" id="txtUsername" name="txtUsername"
+                            placeholder="Enter your name">
+                        </div>
+                        <div class="form-group">
+                          <label for="email">Email:</label>
+                          <input type="text" class="form-control" id="txtEmail" name="txtEmail"
+                            placeholder="Enter your email">
+                        </div>
+                        <div class="form-group">
+                          <label for="message">Password:</label>
+                          <input type="text" class="form-control" id="txtPassword" name="txtPassword"
+                            placeholder="Enter your password">
+                        </div>
+                        <div class="form-group">
+                          <label for="message">Confirm Password:</label>
+                          <input type="text" class="form-control" id="txtConfirmPassword" name="txtConfirmPassword"
+                            placeholder="Enter your confirm password">
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                          <input type="submit" name="btn_signup" class="btn btn-primary" value="SignUp">
+                        </div>
+                      </form>
+                      <p><a class="link-opacity-50-hover" href="http://localhost/Health/login/"> Login if Already have
+                          account..!</a></p>
+                    </div>

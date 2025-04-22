@@ -1,0 +1,144 @@
+//Html Code
+
+
+    <section class="blog-section common-padding-top">
+        <div class="container">
+            <div class="row project">
+
+                <?php
+                $wpnew = array(
+                    'post_type'      => 'post',
+                    'post_status'    => 'publish',
+                    'posts_per_page' => 3
+                );
+                $q = new WP_Query($wpnew);
+                while ($q->have_posts()) {
+                    $q->the_post();
+                ?>
+                    <div class="col-lg-4">
+                        <div class="item-box">
+                            <a href="<?php the_permalink(); ?>">
+                                <div class="image-box">
+                                    <?php echo get_the_post_thumbnail(); ?>
+                                </div>
+                                <div class="blog-info">
+                                    <p class="color-gold">
+                                        <?php echo get_the_date("F j, l"); ?>
+                                    </p>
+                                    <h5>
+                                        <?php the_title(); ?>
+                                    </h5>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                <?php
+                }
+                wp_reset_postdata();
+                ?>
+            </div>
+        </div>
+    </section>
+
+//Script Under Html
+
+ <script>
+        jQuery(function($) {
+            var page = 2; // The initial page number
+            var canLoadMore = true; // Flag to check if more posts can be loaded
+            var loading = false; // Flag to prevent multiple simultaneous requests
+            var postsPerLoad = 3; // Number of posts to load per request
+
+            $(window).scroll(function() {
+                if ($(window).scrollTop() + $(window).height() >= $(document).height() - 100) {
+                    if (canLoadMore && !loading) {
+                        loading = true; // Set loading flag to true to prevent multiple requests
+                        loadMorePosts();
+                    }
+                }
+            });
+
+            function loadMorePosts() {
+                $.ajax({
+                    url: '<?php echo admin_url('admin-ajax.php'); ?>',
+                    type: 'POST',
+                    data: {
+                        action: 'load_more_posts',
+                        page: page,
+                    },
+                    success: function(response) {
+                        console.log(response); // Log the response for debugging
+
+                        if (response.trim() !== 'no_more') {
+                            $('.row.project').append(response); // Append the new posts HTML
+                            page++;
+                        } else {
+                            canLoadMore = false; // No more posts to load
+                        }
+                        loading = false; // Reset loading flag
+                    },
+                    error: function(xhr, textStatus, errorThrown) {
+                        console.log('AJAX error:', textStatus, errorThrown);
+                        loading = false; // Reset loading flag on error
+                    }
+                });
+            }
+        });
+    </script>
+
+<<<<<--- functions.php ---->>>>
+
+function load_more_posts()
+{
+	$page = $_POST['page'];
+
+	$args = array(
+		'post_type'      => 'post',
+		'post_status'    => 'publish',
+		'posts_per_page' => 3,
+		'paged'          => $page,
+	);
+
+	$query = new WP_Query($args);
+
+	ob_start(); // Start output buffering
+
+	if ($query->have_posts()) {
+		while ($query->have_posts()) {
+			$query->the_post();
+	?>
+			<div class="col-lg-4">
+				<div class="item-box">
+					<a href="<?php the_permalink(); ?>">
+						<div class="image-box">
+							<?php echo get_the_post_thumbnail(null, 'thumbnail', array('loading' => 'lazy')); ?>
+						</div>
+						<div class="blog-info">
+							<p class="color-gold">
+								<?php echo get_the_date("F j, l"); ?>
+							</p>
+							<h5>
+								<?php the_title(); ?>
+							</h5>
+						</div>
+					</a>
+				</div>
+			</div>
+		<?php
+		}
+		wp_reset_postdata();
+	} else {
+		echo 'no_more'; // Signal that there are no more posts to load
+	}
+
+	$output = ob_get_clean(); // Get the buffered output
+
+	echo $output; // Return the HTML of the new posts
+
+	die();
+}
+
+add_action('wp_ajax_load_more_posts', 'load_more_posts');
+add_action('wp_ajax_nopriv_load_more_posts', 'load_more_posts');
+
+
